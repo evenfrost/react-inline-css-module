@@ -14,8 +14,8 @@ export default function TransformStyleNameCreateElement<
 ) {
   const props = { ...rawProps };
   const styleName = props.styleName;
-  // 此判断同时确定了 styleName 不为空，且类型是字符串（但有可能是空字符串）
-  // styleName 是空字符串时也有必要走到 if 判断内部，因为需要删除 props 里的 styleName 属性（不然 React 会出现警告）
+  // This check ensures that styleName is not empty and is of type string (though it could be an empty string).
+  // If styleName is an empty string, it still needs to go inside the if block because the styleName property must be removed from props (otherwise, React will show a warning).
   if (typeof styleName === "string") {
     const newClassName = styleName
       .split(" ")
@@ -35,8 +35,8 @@ export default function TransformStyleNameCreateElement<
       .filter(Boolean)
       .join(" ");
 
-    // 解决顺序问题，styleName 在 className 前面还是后面
-    // 只适用于在ES6及更高版本的JavaScript中，因为在ES6之前的版本中，对象的属性顺序是不确定的
+    // Resolve ordering issue: should styleName be placed before or after className?
+    // This only applies to ES6 and later versions of JavaScript, as property order in objects was not guaranteed in versions prior to ES6.
     const keys = Object.keys(props);
     if (keys.indexOf("className") > keys.indexOf("styleName")) {
       props.className = [newClassName, props.className]

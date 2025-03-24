@@ -2,23 +2,23 @@ import MagicString from "magic-string";
 import { name as pkgName } from "../package.json";
 
 /**
- * 找出代码中引入的样式文件
+ * Find the style files imported in the code
  */
 export interface StyleImport {
-  /** 引入了样式文件的语句 */
+  /** The statement that imports the style file */
   statement: string;
-  /** 引入语句前面的修饰符（空格、换行符等） */
+  /** Modifiers before the import statement (spaces, newlines, etc.) */
   prefixStatement: string;
-  /** 引入模块时指定的变量名 */
+  /** The variable name specified when importing the module */
   variable?: string;
-  /** 引入的文件路径 */
+  /** The file path of the imported file */
   filepath: string;
 }
 
-// 第零步：找到所有的样式导入
+// Step 0: Find all style imports
 export function findStyleImports(source: string): StyleImport[] {
   const pattern =
-    /(^|\n)\s*import(?:\s+(.+?)\s+from)?\s+(?:'|")(.+?\.module\.(?:css|less|sass|scss))(?:'|");?/g;
+    /(^|\n)\s*import(?:\s+(.+?)\s+from)?\s+(?:'|")(.+?\.module\.(?:css|less|sass|scss|pcss))(?:'|");?/g;
   return [...source.matchAll(pattern)].map(
     ([statement, prefixStatement, variable, filepath]) => ({
       statement,
@@ -38,9 +38,9 @@ export function handleStyleName(
   const variables: string[] = [];
 
   /**
-   * 第一步：处理样式导入, 给没指定变量名的样式引入补充上变量名
+   * Step 1: Process style imports and assign variable names to imports without one
    *
-   * 例子：`import './index.module.css';` => `import __cls_1 from './index.module.css';`
+   * Example: `import './index.module.css';` => `import __cls_1 from './index.module.css';`
    */
   for (const info of imports) {
     if (!info.variable) {
@@ -60,17 +60,17 @@ export function handleStyleName(
     }
   }
 
-  // 第二步：添加 TransformStyleNameCreateElement 导入
+  // Step 2: Add the TransformStyleNameCreateElement import
   stringEditor.prepend(
     `import { TransformStyleNameCreateElement } from '${pkgName}';\n`
   );
 
   /**
-   * 第三步：用 TransformStyleNameCreateElement 包裹原 React.createElement() 调用
+   * Step 3: Wrap the original React.createElement() calls with TransformStyleNameCreateElement
    *
-   * 例子：`React.createElement('div', { styleName: 'a' })` => `TransformStyleNameCreateElement(React.createElement, [__cls_1], 'div', { styleName: 'a' })`
+   * Example: `React.createElement('div', { styleName: 'a' })` => `TransformStyleNameCreateElement(React.createElement, [__cls_1], 'div', { styleName: 'a' })`
    *
-   * `createElement|_?jsx|_?jsxs|_?jsxDEV`为什么这样匹配的由来：https://www.typescriptlang.org/docs/handbook/jsx.html
+   * Explanation for matching `createElement|_?jsx|_?jsxs|_?jsxDEV`: https://www.typescriptlang.org/docs/handbook/jsx.html
    */
   const pattern = new RegExp(
     `(${reactVariableName}\\.createElement|_?jsx|_?jsxs|_?jsxDEV)\\(`,

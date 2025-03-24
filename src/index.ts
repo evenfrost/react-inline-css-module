@@ -17,7 +17,6 @@ export default (options: Options = {}): Plugin => {
     transform(code, id, options) {
       if (!/\.(tsx|jsx)$/.test(id)) return;
       const imports = findStyleImports(code).filter((item) => !item.variable);
-      //   console.log("[ReactInlineCssModuleTransform] imports: ", id, imports);
       if (!imports.length) return;
 
       const s = handleStyleName(code, imports, reactVariableName);

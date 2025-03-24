@@ -10,7 +10,7 @@ declare namespace React {
   }
 }
 
-// 解决部分 antd 组件传入 styleName 属性会报类型错误的问题
+// Solve the issue where some Ant Design (antd) components throw a type error when passing the styleName property.
 declare global {
   namespace JSX {
     export interface IntrinsicAttributes {
