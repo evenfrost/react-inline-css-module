@@ -1,8 +1,10 @@
 type StyleNameProps = {
+  styleName?: string;
+} & {
   [key in `${string}StyleName`]?: string;
 };
 
-declare namespace React {
+declare module "react" {
   interface Attributes extends StyleNameProps {}
   interface HTMLAttributes<T> extends StyleNameProps {}
   interface SVGAttributes<T> extends StyleNameProps {}

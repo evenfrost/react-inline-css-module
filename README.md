@@ -102,20 +102,7 @@ npm run example:dev
 For intrinsic DOM elements, custom target props are folded into `className` to avoid React DOM warnings; for custom components, the mapped target prop (e.g., `activeClassName`) is preserved.
 
 ## TypeScript setup
-Add the plugin’s JSX typings so custom `*StyleName` props are recognized:
-```ts
-// global.d.ts
-/// <reference types="vite/client" />
-/// <reference types="@evenfrost/react-inline-css-module/types/style-name" />
-```
-Or add to `tsconfig.json`:
-```json
-{
-  "compilerOptions": {
-    "types": ["@evenfrost/react-inline-css-module/types/style-name"]
-  }
-}
-```
+The package ships its own JSX augmentation; importing the plugin is enough for `styleName`/custom `*StyleName` props to type-check. If you prefer explicit references, you can still add `/// <reference types="@evenfrost/react-inline-css-module/types/style-name" />`.
 
 ## Scripts
 - `npm run build` — compile TypeScript and bundle the plugin.

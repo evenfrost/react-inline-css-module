@@ -9,6 +9,7 @@
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "test": "vitest run",
     "build": "tsc && vite build",
@@ -16,7 +17,8 @@
     "pub": "npm publish --access=public",
     "ci": "npm run build && npm run test",
     "example:dev": "vite --config examples/custom-attributes/vite.config.ts",
-    "example:build": "vite build --config examples/custom-attributes/vite.config.ts"
+    "example:build": "vite build --config examples/custom-attributes/vite.config.ts",
+    "typecheck:examples": "tsc -p tsconfig.examples.json"
   },
   "author": "Aliaksei Kislou<evenfrosty@gmail.com>",
   "license": "MIT",
@@ -46,7 +48,7 @@
     "magic-string": "^0.30.17",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "typescript": "^5.4.5",
+    "typescript": "^5.5.4",
     "vite": "^5.2.11",
     "vite-plugin-dts": "^3.9.1",
     "vitest": "^1.6.0"

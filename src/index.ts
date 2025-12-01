@@ -1,3 +1,5 @@
+/// <reference types="../types/style-name" />
+
 import type { Plugin } from "vite";
 import { name as pkgName } from "../package.json";
 import { findStyleImports, handleStyleName } from "./handle-style-name";
