@@ -1,68 +1,80 @@
-# vite-react-css-modules
+# @evenfrost/react-inline-css-module
 
-Auto transform css-modules's className for React with Vite.
+Vite plugin that rewrites `styleName` (and other configured props) to module-scoped `className` values, matching the behavior of `babel-plugin-react-css-modules` without needing Babel.
 
+## Why
+- Use CSS Modules with `styleName` syntax in Vite/React projects.
+- Works with multiple imported CSS Module files per component.
+- Respects your prop ordering when merging `styleName` and `className`.
+- Emits warnings for missing class keys or non-string `styleName` props.
+- Supports custom `*StyleName` props mapped to arbitrary class props.
 
-You can use [babel-plugin-react-css-modules](https://www.npmjs.com/package/babel-plugin-react-css-modules) to achieve the same effect.
-
-But `vite` does not use Babel by default. This plugin provide a hack way to use styleName in vite.
-
-## Feature
-
-Fork from [anjianshi/react-inline-css-module](https://github.com/anjianshi/react-inline-css-module), but fix some errors.
-
-1. Only support vite
-2. Support import multiple css modules files
-3. Fix vite plugin type error
-4. Fix `styleName` order always after `className`.（Now follow your order which you set props）
-5. Add some warnings when use. Like: `variable[${styleName}] is not defined!`
-6. Remove unnecessary code, only trabsform code when `enforce: "post"` 
-> [react-inline-css-module/src/index.ts at feature/vite-plugin · BanShan-Alec/react-inline-css-module](https://github.com/BanShan-Alec/react-inline-css-module/blob/feature/vite-plugin/src/index.ts)
-
-
-## Vite Configuration
-
-```javascript
-// vite.config.js
-import reactStylename from 'vite-react-css-modules';
-
-module.exports = {
-  ...
-  plugins: [
-    reactStylename({
-      attributeNames: {
-        activeStyleName: "activeClassName",
-        bodyStyleName: "bodyClassName",
-      },
-    })
-  ]
-  ...
-}
+## Install
+```bash
+npm install @evenfrost/react-inline-css-module
+# or
+yarn add @evenfrost/react-inline-css-module
 ```
 
-The `attributeNames` option lets you declare extra props that should behave like `styleName`.
-Each key is the prop containing CSS Module class names, and each value is the prop where the transformed className should be written.
-
-### Custom attribute example
-See `examples/custom-attributes` for a minimal component and stylesheet.
-
+## Vite setup
 ```ts
 // vite.config.ts
+import react from '@vitejs/plugin-react';
 import reactStylename from '@evenfrost/react-inline-css-module';
 
 export default {
   plugins: [
+    react(),
     reactStylename({
       attributeNames: {
-        togglerStyleName: "togglerClassName",
-        bodyStyleName: "bodyClassName",
-        wrapperStyleName: "wrapperClassName",
+        // sourceProp: targetClassProp
+        styleName: 'className',            // default
+        activeStyleName: 'activeClassName' // custom
       },
+      // reactVariableName: 'React',      // change if you use a different React import name
     }),
   ],
 };
 ```
 
+## Options
+- `attributeNames?: Record<string, string>`  
+  Map of props that should be treated like `styleName`. Keys are the props containing CSS Module keys; values are the props that receive the transformed class string. Defaults to `{ styleName: "className" }`.
+- `reactVariableName?: string`  
+  If you import React under a different name, set it here so `React.createElement` calls are wrapped correctly.
+
+## Usage
+```css
+/* style.module.css */
+.app { color: #777; }
+.info { color: green; }
+```
+
+```tsx
+import './style.module.css';
+
+export function App() {
+  return (
+    <div styleName="app">
+      <div>content</div>
+      <div styleName="info">info</div>
+    </div>
+  );
+}
+```
+
+### Custom attribute example
+`examples/custom-attributes` contains a runnable demo. Minimal setup:
+```ts
+// vite.config.ts
+reactStylename({
+  attributeNames: {
+    togglerStyleName: "togglerClassName",
+    bodyStyleName: "bodyClassName",
+    wrapperStyleName: "wrapperClassName",
+  },
+});
+```
 ```tsx
 // examples/custom-attributes/App.tsx
 import "./style.module.css";
@@ -83,56 +95,33 @@ export function Dropdown({ open }: { open: boolean }) {
   );
 }
 ```
-
-## TypeScript Configuration
-> Two way to configure ts prompt
-
-global.d.ts（Recommended）
-```ts
-/// <reference types="vite/client" />
-/// <reference types="vite-react-css-modules/types/style-name" />
-...
+Run the demo locally:
+```bash
+npm run example:dev
 ```
 
-tsconfig.json
+## TypeScript setup
+Add the plugin’s JSX typings so custom `*StyleName` props are recognized:
+```ts
+// global.d.ts
+/// <reference types="vite/client" />
+/// <reference types="@evenfrost/react-inline-css-module/types/style-name" />
+```
+Or add to `tsconfig.json`:
 ```json
 {
   "compilerOptions": {
-    "types": ["vite-react-css-modules/types/style-name"]
+    "types": ["@evenfrost/react-inline-css-module/types/style-name"]
   }
 }
 ```
 
-## Tests
-```
-npm test
-```
+## Scripts
+- `npm run build` — compile TypeScript and bundle the plugin.
+- `npm test` — run Vitest suite.
+- `npm run example:dev` — start the custom-attribute demo (Vite dev server).
+- `npm run example:build` — build the demo.
 
-## Code Example
-> Also work-well with `less`
-### style.module.css
-
-```css
-.app {
-  color: #777;
-}
-
-.info {
-  color: green;
-}
-```
-
-### App.tsx
-
-```js
-import './style.module.css'
-
-function App() {
-  return (
-    <div styleName="app">
-      <div>content</div>
-      <div styleName="info">info</div>
-    </div>
-  )
-}
-```
+## Notes
+- Only transforms `.jsx`/`.tsx` files.
+- Warnings are logged when a referenced CSS Module key is missing or when a style prop is not a string.
