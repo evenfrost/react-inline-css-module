@@ -32,10 +32,12 @@ export function findStyleImports(source: string): StyleImport[] {
 export function handleStyleName(
   source: string,
   imports: StyleImport[],
-  reactVariableName: string
+  reactVariableName: string,
+  attributeNames: Record<string, string>
 ) {
   const stringEditor = new MagicString(source);
   const variables: string[] = [];
+  const serializedAttributeNames = JSON.stringify(attributeNames);
 
   /**
    * Step 1: Process style imports and assign variable names to imports without one
@@ -84,7 +86,9 @@ export function handleStyleName(
     stringEditor.overwrite(
       start,
       end,
-      `TransformStyleNameCreateElement(${match[1]}, [${variables.join(",")}], `
+      `TransformStyleNameCreateElement(${match[1]}, [${variables.join(
+        ","
+      )}], ${serializedAttributeNames}, `
     );
   }
 

@@ -6,10 +6,15 @@ import TransformStyleNameCreateElement from "./transform-style-name-create-eleme
 
 interface Options {
   reactVariableName?: string;
+  attributeNames?: Record<string, string>;
 }
 
 export default (options: Options = {}): Plugin => {
-  const { reactVariableName = "React" } = options;
+  const { reactVariableName = "React", attributeNames = {} } = options;
+  const attributeNameMap = {
+    styleName: "className",
+    ...attributeNames,
+  };
 
   return {
     name: pkgName,
@@ -19,7 +24,12 @@ export default (options: Options = {}): Plugin => {
       const imports = findStyleImports(code).filter((item) => !item.variable);
       if (!imports.length) return;
 
-      const s = handleStyleName(code, imports, reactVariableName);
+      const s = handleStyleName(
+        code,
+        imports,
+        reactVariableName,
+        attributeNameMap
+      );
 
       return {
         code: s.toString(),

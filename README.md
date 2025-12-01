@@ -29,9 +29,58 @@ import reactStylename from 'vite-react-css-modules';
 module.exports = {
   ...
   plugins: [
-    reactStylename()
+    reactStylename({
+      attributeNames: {
+        activeStyleName: "activeClassName",
+        bodyStyleName: "bodyClassName",
+      },
+    })
   ]
   ...
+}
+```
+
+The `attributeNames` option lets you declare extra props that should behave like `styleName`.
+Each key is the prop containing CSS Module class names, and each value is the prop where the transformed className should be written.
+
+### Custom attribute example
+See `examples/custom-attributes` for a minimal component and stylesheet.
+
+```ts
+// vite.config.ts
+import reactStylename from '@evenfrost/react-inline-css-module';
+
+export default {
+  plugins: [
+    reactStylename({
+      attributeNames: {
+        togglerStyleName: "togglerClassName",
+        bodyStyleName: "bodyClassName",
+        wrapperStyleName: "wrapperClassName",
+      },
+    }),
+  ],
+};
+```
+
+```tsx
+// examples/custom-attributes/App.tsx
+import "./style.module.css";
+
+export function Dropdown({ open }: { open: boolean }) {
+  return (
+    <div wrapperStyleName="wrapper" wrapperClassName="dropdown-wrapper">
+      <button togglerStyleName="toggler" togglerClassName="dropdown-btn">
+        Toggle
+      </button>
+      <div
+        bodyStyleName={open ? "bodyOpen" : "bodyClosed"}
+        bodyClassName="dropdown-body"
+      >
+        Content
+      </div>
+    </div>
+  );
 }
 ```
 
@@ -52,6 +101,11 @@ tsconfig.json
     "types": ["vite-react-css-modules/types/style-name"]
   }
 }
+```
+
+## Tests
+```
+npm test
 ```
 
 ## Code Example

@@ -10,11 +10,13 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "scripts": {
-    "test": "echo \"Normal: no test specified\" && exit 0",
+    "test": "vitest run",
     "build": "tsc && vite build",
     "prepublishOnly": "npm run build",
     "pub": "npm publish --access=public",
-    "ci": "npm run build && npm run test"
+    "ci": "npm run build && npm run test",
+    "example:dev": "vite --config examples/custom-attributes/vite.config.ts",
+    "example:build": "vite build --config examples/custom-attributes/vite.config.ts"
   },
   "author": "Aliaksei Kislou<evenfrosty@gmail.com>",
   "license": "MIT",
@@ -38,10 +40,16 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.10",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
     "magic-string": "^0.30.17",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
-    "vite-plugin-dts": "^3.9.1"
+    "vite-plugin-dts": "^3.9.1",
+    "vitest": "^1.6.0"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

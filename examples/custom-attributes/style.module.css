@@ -1,0 +1,22 @@
+.wrapper {
+  padding: 12px;
+}
+
+.toggler {
+  background: #111827;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.body {
+  margin-top: 8px;
+}
+
+.bodyOpen {
+  display: block;
+}
+
+.bodyClosed {
+  display: none;
+}
