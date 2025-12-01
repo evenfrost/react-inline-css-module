@@ -99,6 +99,7 @@ Run the demo locally:
 ```bash
 npm run example:dev
 ```
+For intrinsic DOM elements, custom target props are folded into `className` to avoid React DOM warnings; for custom components, the mapped target prop (e.g., `activeClassName`) is preserved.
 
 ## TypeScript setup
 Add the plugin’s JSX typings so custom `*StyleName` props are recognized:
